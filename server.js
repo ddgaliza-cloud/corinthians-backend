@@ -1,11 +1,6 @@
 import Fastify from 'fastify'
-import dotenv from 'dotenv'
-
-dotenv.config()
 
 const fastify = Fastify({ logger: true })
-
-const PORT = process.env.PORT || 3333
 
 let jogadores = [
   {
@@ -43,7 +38,6 @@ fastify.get('/jogadores', async () => {
 })
 
 fastify.post('/jogadores', async (request) => {
-
   const novoJogador = request.body
 
   jogadores.push(novoJogador)
@@ -52,7 +46,5 @@ fastify.post('/jogadores', async (request) => {
 })
 
 fastify.listen({
-  port: PORT
-}).then(() => {
-  console.log(`Servidor rodando em http://localhost:${PORT}`)
+  port: 3333
 })
