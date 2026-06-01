@@ -1,75 +1,96 @@
-
 import Fastify from 'fastify'
+import dotenv from 'dotenv'
+
+dotenv.config()
 
 const fastify = Fastify({ logger: true })
 
-let jogadores = [
+const PORT = process.env.PORT || 3333
+
+let videos = [
   {
     id: 1,
-    nome: "Yuri Alberto",
-    numero: 9,
-    posicao: "Atacante",
-    idade: 24
+    titulo: 'Gol do Yuri Alberto',
+    descricao: 'Melhores momentos do jogo',
+    url: 'https://youtube.com/video1'
   },
   {
     id: 2,
-    nome: "Rodrigo Garro",
-    numero: 10,
-    posicao: "Meia",
-    idade: 27
+    titulo: 'Assistências do Garro',
+    descricao: 'Lances da temporada',
+    url: 'https://youtube.com/video2'
   }
 ]
 
+// Rota inicial
 fastify.get('/', async () => {
-  return { mensagem: 'API do Corinthians funcionando!' }
+  return {
+    mensagem: 'API de Vídeos do Corinthians funcionando!'
+  }
 })
 
-fastify.get('/jogadores', async () => {
-  return jogadores
+// LISTAR
+fastify.get('/videos', async () => {
+  return videos
 })
 
-fastify.post('/jogadores', async (request) => {
-  const novo = {
-    id: jogadores.length + 1,
+// BUSCAR POR ID
+fastify.get('/videos/:id', async (request) => {
+  const id = Number(request.params.id)
+
+  const video = videos.find(v => v.id === id)
+
+  if (!video) {
+    return { mensagem: 'Vídeo não encontrado!' }
+  }
+
+  return video
+})
+
+// CADASTRAR
+fastify.post('/videos', async (request) => {
+  const novoVideo = {
+    id: videos.length + 1,
     ...request.body
   }
 
-  jogadores.push(novo)
+  videos.push(novoVideo)
 
   return {
-    mensagem: 'Jogador cadastrado!',
-    jogador: novo
+    mensagem: 'Vídeo cadastrado com sucesso!',
+    video: novoVideo
   }
 })
 
-fastify.put('/jogadores/:id', async (request) => {
+// ATUALIZAR
+fastify.put('/videos/:id', async (request) => {
   const id = Number(request.params.id)
   const dados = request.body
 
-  jogadores = jogadores.map(j =>
-    j.id === id ? { ...j, ...dados } : j
+  videos = videos.map(video =>
+    video.id === id
+      ? { ...video, ...dados }
+      : video
   )
 
-  return { mensagem: 'Jogador atualizado!' }
-})
-
-fastify.delete('/jogadores/:id', async (request) => {
-  const id = Number(request.params.id)
-
-  jogadores = jogadores.filter(j => j.id !== id)
-
-  return { mensagem: 'Jogador removido!' }
-
-})
-fastify.get('/corinthians', async () => {
   return {
-    clube: 'Corinthians',
-    estadio: 'Neo Química Arena',
-    cidade: 'São Paulo'
+    mensagem: 'Vídeo atualizado com sucesso!'
   }
 })
+
+// EXCLUIR
+fastify.delete('/videos/:id', async (request) => {
+  const id = Number(request.params.id)
+
+  videos = videos.filter(video => video.id !== id)
+
+  return {
+    mensagem: 'Vídeo removido com sucesso!'
+  }
+})
+
 fastify.listen({
-  port: 3333
+  port: PORT
 }).then(() => {
-  console.log('Servidor rodando em http://localhost:3333')
+  console.log(`Servidor rodando em http://localhost:${PORT}`)
 })
