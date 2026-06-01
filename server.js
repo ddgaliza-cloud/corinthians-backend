@@ -1,3 +1,4 @@
+console.log("TESTE DE GIT");
 import Fastify from 'fastify'
 import dotenv from 'dotenv'
 
