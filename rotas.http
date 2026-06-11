@@ -1,20 +1,25 @@
-GET http://localhost:3333
+GET http://localhost:3333/jogadores
 
 ###
 
-GET http://localhost:3333/videos
-
-###
-
-GET http://localhost:3333/videos/1
-
-###
-
-POST http://localhost:3333/videos
+POST http://localhost:3333/jogadores
 Content-Type: application/json
 
 {
-  "titulo": "Memphis Depay",
-  "descricao": "Melhores momentos",
-  "url": "https://youtube.com/video3"
+  "nome": "Memphis Depay",
+  "numero": 10,
+  "posicao": "Atacante",
+  "idade": 31
+}
+
+###
+
+PUT http://localhost:3333/jogadores/1
+Content-Type: application/json
+
+{
+  "nome": "Yuri Alberto",
+  "numero": 9,
+  "posicao": "Atacante",
+  "idade": 24
 }

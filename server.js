@@ -8,85 +8,87 @@ const fastify = Fastify({ logger: true })
 
 const PORT = process.env.PORT || 3333
 
-let videos = [
+let jogadores = [
   {
     id: 1,
-    titulo: 'Gol do Yuri Alberto',
-    descricao: 'Melhores momentos do jogo',
-    url: 'https://youtube.com/video1'
+    nome: 'Yuri Alberto',
+    numero: 9,
+    posicao: 'Atacante',
+    idade: 24
   },
   {
     id: 2,
-    titulo: 'Assistências do Garro',
-    descricao: 'Lances da temporada',
-    url: 'https://youtube.com/video2'
+    nome: 'Rodrigo Garro',
+    numero: 10,
+    posicao: 'Meia',
+    idade: 27
   }
 ]
 
 // Rota inicial
 fastify.get('/', async () => {
   return {
-    mensagem: 'API de Vídeos do Corinthians funcionando!'
+    mensagem: 'API do Corinthians funcionando!'
   }
 })
 
 // LISTAR
-fastify.get('/videos', async () => {
-  return videos
+fastify.get('/jogadores', async () => {
+  return jogadores
 })
 
 // BUSCAR POR ID
-fastify.get('/videos/:id', async (request) => {
+fastify.get('/jogadores/:id', async (request) => {
   const id = Number(request.params.id)
 
-  const video = videos.find(v => v.id === id)
+  const jogador = jogadores.find(j => j.id === id)
 
-  if (!video) {
-    return { mensagem: 'Vídeo não encontrado!' }
+  if (!jogador) {
+    return { mensagem: 'Jogador não encontrado!' }
   }
 
-  return video
+  return jogador
 })
 
 // CADASTRAR
-fastify.post('/videos', async (request) => {
-  const novoVideo = {
-    id: videos.length + 1,
+fastify.post('/jogadores', async (request) => {
+  const novoJogador = {
+    id: jogadores.length + 1,
     ...request.body
   }
 
-  videos.push(novoVideo)
+  jogadores.push(novoJogador)
 
   return {
-    mensagem: 'Vídeo cadastrado com sucesso!',
-    video: novoVideo
+    mensagem: 'Jogador cadastrado com sucesso!',
+    jogador: novoJogador
   }
 })
 
 // ATUALIZAR
-fastify.put('/videos/:id', async (request) => {
+fastify.put('/jogadores/:id', async (request) => {
   const id = Number(request.params.id)
   const dados = request.body
 
-  videos = videos.map(video =>
-    video.id === id
-      ? { ...video, ...dados }
-      : video
+  jogadores = jogadores.map(jogador =>
+    jogador.id === id
+      ? { ...jogador, ...dados }
+      : jogador
   )
 
   return {
-    mensagem: 'Vídeo atualizado com sucesso!'
+    mensagem: 'Jogador atualizado com sucesso!'
   }
 })
 
 // EXCLUIR
-fastify.delete('/videos/:id', async (request) => {
+fastify.delete('/jogadores/:id', async (request) => {
   const id = Number(request.params.id)
 
-  videos = videos.filter(video => video.id !== id)
+  jogadores = jogadores.filter(jogador => jogador.id !== id)
 
   return {
-    mensagem: 'Vídeo removido com sucesso!'
+    mensagem: 'Jogador removido com sucesso!'
   }
 })
 
