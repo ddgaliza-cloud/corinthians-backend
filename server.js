@@ -1,99 +1,49 @@
-console.log("TESTE DE GIT");
-import Fastify from 'fastify'
-import dotenv from 'dotenv'
+import { fastify } from 'fastify';
+import { DatabaseMySQL } from './database-mysql.js';
+import dotenv from 'dotenv';
 
-dotenv.config()
+dotenv.config();
 
-const fastify = Fastify({ logger: true })
+const PORT = process.env.PORT || 3333;
+const server = fastify({ logger: true });
+const database = new DatabaseMySQL();
 
-const PORT = process.env.PORT || 3333
+server.get('/', async () => {
+  return { message: 'API do Corinthians rodando com MySQL!' };
+});
 
-let jogadores = [
-  {
-    id: 1,
-    nome: 'Yuri Alberto',
-    numero: 9,
-    posicao: 'Atacante',
-    idade: 24
-  },
-  {
-    id: 2,
-    nome: 'Rodrigo Garro',
-    numero: 10,
-    posicao: 'Meia',
-    idade: 27
-  }
-]
+// Criar jogador
+server.post('/jogadores', async (request, reply) => {
+  await database.create(request.body);
+  return reply.status(201).send();
+});
 
-// Rota inicial
-fastify.get('/', async () => {
-  return {
-    mensagem: 'API do Corinthians funcionando!'
-  }
-})
+// Listar jogadores
+server.get('/jogadores', async (request, reply) => {
+  const { search } = request.query;
+  const jogadores = await database.list(search);
+  return jogadores;
+});
 
-// LISTAR
-fastify.get('/jogadores', async () => {
-  return jogadores
-})
+// Atualizar jogador
+server.put('/jogadores/:id', async (request, reply) => {
+  const { id } = request.params;
+  await database.update(id, request.body);
+  return reply.status(204).send();
+});
 
-// BUSCAR POR ID
-fastify.get('/jogadores/:id', async (request) => {
-  const id = Number(request.params.id)
+// Deletar jogador
+server.delete('/jogadores/:id', async (request, reply) => {
+  const { id } = request.params;
+  await database.delete(id);
+  return reply.status(204).send();
+});
 
-  const jogador = jogadores.find(j => j.id === id)
-
-  if (!jogador) {
-    return { mensagem: 'Jogador não encontrado!' }
+server.listen({ port: PORT }, (err, address) => {
+  if (err) {
+    console.error(err);
+    process.exit(1);
   }
 
-  return jogador
-})
-
-// CADASTRAR
-fastify.post('/jogadores', async (request) => {
-  const novoJogador = {
-    id: jogadores.length + 1,
-    ...request.body
-  }
-
-  jogadores.push(novoJogador)
-
-  return {
-    mensagem: 'Jogador cadastrado com sucesso!',
-    jogador: novoJogador
-  }
-})
-
-// ATUALIZAR
-fastify.put('/jogadores/:id', async (request) => {
-  const id = Number(request.params.id)
-  const dados = request.body
-
-  jogadores = jogadores.map(jogador =>
-    jogador.id === id
-      ? { ...jogador, ...dados }
-      : jogador
-  )
-
-  return {
-    mensagem: 'Jogador atualizado com sucesso!'
-  }
-})
-
-// EXCLUIR
-fastify.delete('/jogadores/:id', async (request) => {
-  const id = Number(request.params.id)
-
-  jogadores = jogadores.filter(jogador => jogador.id !== id)
-
-  return {
-    mensagem: 'Jogador removido com sucesso!'
-  }
-})
-
-fastify.listen({
-  port: PORT
-}).then(() => {
-  console.log(`Servidor rodando em http://localhost:${PORT}`)
-})
+  console.log(`Servidor rodando em ${address}`);
+});

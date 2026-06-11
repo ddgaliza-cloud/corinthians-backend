@@ -1,25 +1,28 @@
-GET http://localhost:3333/jogadores
+###
+GET http://localhost:3333
 
+###
+POST http://localhost:3333/jogadores
+Content-Type: application/json
+
+{
+  "NOME": "Yuri Alberto",
+  "description": "Atacante do Corinthians",
+  "NUMCAMISA": 9
+}
+
+###
+GET http://localhost:3333/jogadores
 ###
 
 POST http://localhost:3333/jogadores
 Content-Type: application/json
 
 {
-  "nome": "Memphis Depay",
-  "numero": 10,
-  "posicao": "Atacante",
-  "idade": 31
+  "NOME": "Yuri Alberto",
+  "description": "Atacante do Corinthians",
+  "NUMCAMISA": 9
 }
 
 ###
-
-PUT http://localhost:3333/jogadores/1
-Content-Type: application/json
-
-{
-  "nome": "Yuri Alberto",
-  "numero": 9,
-  "posicao": "Atacante",
-  "idade": 24
-}
+GET http://localhost:3333/jogadores
